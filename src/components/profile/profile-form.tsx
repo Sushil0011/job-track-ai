@@ -57,17 +57,6 @@ export default function ProfileForm({ user }: { user: UserData }) {
       </div>
 
       <form onSubmit={handleProfileSubmit} className="space-y-5 max-w-lg">
-        {profileError && (
-          <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg">
-            {profileError}
-          </div>
-        )}
-        {profileSuccess && (
-          <div className="p-3 text-sm text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg">
-            {profileSuccess}
-          </div>
-        )}
-
         <div className="space-y-1.5">
           <label
             htmlFor="name"
@@ -109,15 +98,23 @@ export default function ProfileForm({ user }: { user: UserData }) {
           </p>
         </div>
 
-        <div className="pt-1">
+        <div className="pt-1 flex flex-wrap items-center gap-3">
           <button
             type="submit"
             disabled={isSavingProfile}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover:shadow-[0_4px_14px_0_rgba(79,70,229,0.39)] disabled:opacity-70 disabled:cursor-not-allowed"
+            className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover:shadow-[0_4px_14px_0_rgba(79,70,229,0.39)] disabled:opacity-70 disabled:cursor-not-allowed shrink-0"
           >
             {isSavingProfile && <Loader2 className="w-4 h-4 animate-spin" />}
             {isSavingProfile ? "Saving..." : "Save changes"}
           </button>
+          {profileError && (
+            <p className="text-sm text-red-600 font-medium">{profileError}</p>
+          )}
+          {profileSuccess && !profileError && (
+            <p className="text-sm text-emerald-700 font-medium">
+              {profileSuccess}
+            </p>
+          )}
         </div>
       </form>
     </div>
