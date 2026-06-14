@@ -1,16 +1,20 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 
 export function proxy(request: NextRequest) {
   const token = request.cookies.has("refresh_token");
   if (
-    (token && request.nextUrl.pathname.startsWith("/login")) ||
-    request.nextUrl.pathname.startsWith("/signup")
+    token &&
+    (request.nextUrl.pathname.startsWith("/login") ||
+      request.nextUrl.pathname.startsWith("/signup"))
   ) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  if (!token && request.nextUrl.pathname.startsWith("/dashboard")) {
+  if (
+    !token &&
+    (request.nextUrl.pathname.startsWith("/dashboard") ||
+      request.nextUrl.pathname.startsWith("/profile"))
+  ) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 

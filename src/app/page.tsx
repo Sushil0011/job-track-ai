@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Briefcase, BarChart3, Clock } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 export default function LandingPage() {
   return (

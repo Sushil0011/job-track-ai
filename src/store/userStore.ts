@@ -15,6 +15,7 @@ type UserState = {
   // Actions
   setUser: (userData: User) => void;
   updateProfile: (name: string) => void;
+  clearUser: () => void;
 }
 
 // 3. Create the actual store
@@ -35,4 +36,10 @@ export const userStore = create<UserState>((set) => ({
       // Only update if a user exists, keep the rest of the user object intact
       user: state.user ? { ...state.user, name: newName } : null,
     })),
+
+  clearUser: () =>
+    set({
+      user: null,
+      isAuthenticated: false,
+    }),
 }));
