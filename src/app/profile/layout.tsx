@@ -1,8 +1,9 @@
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { getUser } from "@/utils/apis";
 import ProfileSidebar from "@/components/profile/profile-sidebar";
 
-export default async function ProfileLayout({
+async function ProfileLayoutContent({
   children,
 }: {
   children: React.ReactNode;
@@ -20,5 +21,17 @@ export default async function ProfileLayout({
         <div className="relative z-10">{children}</div>
       </div>
     </div>
+  );
+}
+
+export default function ProfileLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <Suspense>
+      <ProfileLayoutContent>{children}</ProfileLayoutContent>
+    </Suspense>
   );
 }

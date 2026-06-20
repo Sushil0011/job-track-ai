@@ -9,8 +9,7 @@ type LoginPageProps = {
   searchParams: Promise<{ reset?: string }>;
 };
 
-export default async function LoginPage({ searchParams }: LoginPageProps) {
-  const { reset } = await searchParams;
+export default async function LoginPage() {
   return (
     <div className="w-full mx-auto max-w-md bg-white rounded-2xl shadow-premium border border-slate-200/60 p-8 relative overflow-hidden">
       <div className="absolute -top-12 -right-12 w-32 h-32 bg-indigo-500/10 blur-3xl rounded-full pointer-events-none" />
@@ -31,7 +30,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       </div>
       <Suspense>
         <div className="relative z-10">
-          <CredentialsForm passwordResetSuccess={reset === "success"} />
+          <CredentialsForm />
           <GoogleButton />
           <GithubLogin/>
         </div>

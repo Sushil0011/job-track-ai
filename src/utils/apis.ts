@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { cookies } from "next/headers";
 import { cacheLife, cacheTag } from "next/cache";
 import { get } from "axify-js";
@@ -10,12 +11,12 @@ export type UserData = {
 
 const USER_CACHE_SECONDS = 50 * 60;
 
-export async function getUser(): Promise<UserData | null> {
+export const getUser = cache(async (): Promise<UserData | null> => {
   const token = (await cookies()).get("token")?.value;
   if (!token) return null;
 
   return getCachedUser(token);
-}
+});
 
 async function getCachedUser(token: string): Promise<UserData | null> {
   "use cache";

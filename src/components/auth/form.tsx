@@ -7,12 +7,13 @@ import { useRouter, usePathname } from "next/navigation";
 import { post } from "axify-js";
 import cookie from "js-cookie";
 import { userStore } from "@/store/userStore";
+import { useSearchParams } from "next/navigation";
 
-export default function CredentialsForm({
-  passwordResetSuccess = false,
-}: {
-  passwordResetSuccess?: boolean;
-}) {
+type LoginPageProps = {
+  searchParams: Promise<{ reset?: string }>;
+};
+
+export default function CredentialsForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -22,6 +23,9 @@ export default function CredentialsForm({
   const path = usePathname();
   const login = path === "/login";
   const setUser = userStore((state) => state.setUser);
+  const searchParams = useSearchParams();
+  const reset = searchParams.get("reset");
+  const passwordResetSuccess= reset==='success'
 
   type payload = {
     name?: string;

@@ -3,10 +3,10 @@ import Link from "next/link";
 import GoogleButton from "@/components/auth/google-auth";
 import CredentialsForm from "@/components/auth/form";
 import GithubLogin from "@/components/auth/github-auth";
+import { Suspense } from "react";
 
 export default function SignupPage() {
   return (
-  
       <div className="w-full max-w-md mx-auto bg-white rounded-2xl shadow-premium border border-slate-200/60 p-8 relative overflow-hidden">
         <div className="absolute -top-12 -right-12 w-32 h-32 bg-indigo-500/10 blur-3xl rounded-full pointer-events-none" />
 
@@ -25,11 +25,13 @@ export default function SignupPage() {
           </p>
         </div>
 
-        <div className="relative z-10">
-          <CredentialsForm />
-          <GoogleButton />
-          <GithubLogin/>
-        </div>
+        <Suspense>
+          <div className="relative z-10">
+            <CredentialsForm />
+            <GoogleButton />
+            <GithubLogin/>
+          </div>
+        </Suspense>
         <Link
           href="/login"
           className=" mx-auto block text-center text-xs text-indigo-700 mt-4 relative z-10"
