@@ -1,5 +1,6 @@
 "use server";
 
+import { post } from "axify-js";
 import { cookies } from "next/headers";
 
 type ActionResult = { error?: string };
@@ -21,16 +22,8 @@ function parseErrorMessage(body: unknown, fallback: string): string {
 
 export async function updatePassword(
   currentPassword: string,
-  newPassword: string
+  newPassword: string,
 ): Promise<ActionResult> {
-  if (!currentPassword) {
-    return { error: "Current password is required" };
-  }
-
-  if (newPassword.length < 8) {
-    return { error: "New password must be at least 8 characters" };
-  }
-
   const token = await getAuthToken();
   if (!token) {
     return { error: "Not authenticated" };
@@ -42,23 +35,21 @@ export async function updatePassword(
   }
 
   try {
-    const res = await fetch(`${apiUrl}/user/password`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+    const res = await post(
+      `${apiUrl}/auth/change-password`,
+      { oldPassword:currentPassword, newPassword },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       },
-      body: JSON.stringify({
-        currentPassword,
-        newPassword,
-      }),
-    });
+    );
 
-    if (!res.ok) {
+    if (!res) {
       const body = await res.json().catch(() => null);
       return { error: parseErrorMessage(body, "Failed to update password") };
     }
-
     return {};
   } catch {
     return { error: "Failed to update password" };

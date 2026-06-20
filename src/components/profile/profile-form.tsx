@@ -56,7 +56,7 @@ export default function ProfileForm({ user }: { user: UserData }) {
         </p>
       </div>
 
-      <form onSubmit={handleProfileSubmit} className="space-y-5 max-w-lg">
+      <form onSubmit={handleProfileSubmit} className="space-y-5 max-w-xl">
         <div className="space-y-1.5">
           <label
             htmlFor="name"

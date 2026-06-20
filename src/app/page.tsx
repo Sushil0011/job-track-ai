@@ -3,9 +3,7 @@ import { ArrowRight } from "lucide-react";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-[calc(100vh-72px)] bg-slate-50 text-slate-900 selection:bg-indigo-100 selection:text-indigo-900 flex flex-col">
-
-
+    <div className=" bg-slate-50 text-slate-900 selection:bg-indigo-100 selection:text-indigo-900 flex flex-col">
       {/* Hero Section */}
       <main className="flex-1 flex flex-col items-center justify-center relative overflow-hidden px-6 py-10">
         {/* Subtle Background Glow */}

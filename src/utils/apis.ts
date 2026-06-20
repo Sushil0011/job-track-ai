@@ -30,14 +30,14 @@ async function getCachedUser(token: string): Promise<UserData | null> {
   if (!apiUrl) return null;
 
   try {
-    const res = await get(`${apiUrl}/user`, {
+    const {data} = await get(`${apiUrl}/user`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    if (!res) return null;
-
-    return res?.user ?? null;
+    console.log(data,'res')
+    if (!data) return null;
+    return data.user ?? null;
   } catch (error) {
     console.error("Error fetching user data:", error);
     return null;

@@ -1,12 +1,17 @@
 import { Briefcase } from "lucide-react";
 import Link from "next/link";
 import GoogleButton from "@/components/auth/GoogleAuth";
-import CredentialsForm from "@/components/login/form";
+import CredentialsForm from "@/components/auth/form";
 
-export default function LoginPage() {
+type LoginPageProps = {
+  searchParams: Promise<{ reset?: string }>;
+};
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const { reset } = await searchParams;
   return (
-    <div className="min-h-[calc(100vh-72px)] flex items-center justify-center bg-slate-50 p-6 selection:bg-indigo-100 selection:text-indigo-900">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-premium border border-slate-200/60 p-8 relative overflow-hidden">
+
+      <div className="w-full mx-auto max-w-md bg-white rounded-2xl shadow-premium border border-slate-200/60 p-8 relative overflow-hidden">
         <div className="absolute -top-12 -right-12 w-32 h-32 bg-indigo-500/10 blur-3xl rounded-full pointer-events-none" />
 
         <div className="flex flex-col items-center text-center mb-8 relative z-10">
@@ -25,7 +30,7 @@ export default function LoginPage() {
         </div>
 
         <div className="relative z-10">
-          <CredentialsForm />
+          <CredentialsForm passwordResetSuccess={reset === "success"} />
           <GoogleButton />
         </div>
         <Link
@@ -53,6 +58,6 @@ export default function LoginPage() {
           .
         </p>
       </div>
-    </div>
+
   );
 }

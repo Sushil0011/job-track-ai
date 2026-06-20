@@ -1,15 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
 import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 import { post } from "axify-js";
-import { usePathname } from "next/navigation";
 import cookie from "js-cookie";
 import { userStore } from "@/store/userStore";
 
-export default function CredentialsForm() {
+export default function CredentialsForm({
+  passwordResetSuccess = false,
+}: {
+  passwordResetSuccess?: boolean;
+}) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -30,7 +33,7 @@ export default function CredentialsForm() {
     e.preventDefault();
     setIsLoading(true);
     setError("");
-    const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/${login ? "login" : "signup"}`;
+    const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/auth/${login ? "login" : "signup"}`;
     const payload: payload = {
       email,
       password,
@@ -58,18 +61,20 @@ export default function CredentialsForm() {
 
       router.push("/dashboard");
       router.refresh();
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("An unknown error occurred");
-      }
+    } catch (err: any) {
+      console.log(err,'err')
+      setError(err.data.message)
       setIsLoading(false);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {passwordResetSuccess && (
+        <div className="p-3 text-sm text-emerald-800 bg-emerald-50 border border-emerald-100 rounded-lg">
+          Your password has been reset. Sign in with your new password.
+        </div>
+      )}
       {error && (
         <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg">
           {error}
@@ -124,12 +129,14 @@ export default function CredentialsForm() {
           >
             Password
           </label>
-          <a
-            href="#"
-            className="text-xs font-medium text-indigo-600 hover:text-indigo-500"
-          >
-            Forgot password?
-          </a>
+          {login && (
+            <Link
+              href="/forgot-password"
+              className="text-xs font-medium text-indigo-600 hover:text-indigo-500"
+            >
+              Forgot password?
+            </Link>
+          )}
         </div>
         <input
           onChange={(e) => setPassword(e.target.value)}
@@ -150,7 +157,13 @@ export default function CredentialsForm() {
         className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover:shadow-[0_4px_14px_0_rgba(79,70,229,0.39)] disabled:opacity-70 disabled:cursor-not-allowed mt-2"
       >
         {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
-        {isLoading ? "Signing in..." : "Sign in"}
+        {isLoading
+          ? login
+            ? "Signing in..."
+            : "Signing up..."
+          : login
+            ? "Sign in"
+            : "Sign up"}
       </button>
     </form>
   );

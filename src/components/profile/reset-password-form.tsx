@@ -22,13 +22,11 @@ export default function ResetPasswordForm() {
       return;
     }
 
-    if (newPassword.length < 8) {
-      setError("New password must be at least 8 characters.");
+    if (newPassword.length < 6) {
+      setError("New password must be at least 6 characters.");
       return;
     }
-
     setIsSaving(true);
-
     const result = await updatePassword(currentPassword, newPassword);
 
     if (result.error) {
@@ -55,7 +53,7 @@ export default function ResetPasswordForm() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5 max-w-lg">
+      <form onSubmit={handleSubmit} className="space-y-5 max-w-xl">
         <div className="space-y-1.5">
           <label
             htmlFor="currentPassword"
@@ -93,7 +91,7 @@ export default function ResetPasswordForm() {
             onChange={(e) => setNewPassword(e.target.value)}
             autoComplete="new-password"
             required
-            minLength={8}
+            minLength={6}
             className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm transition-shadow"
             placeholder="••••••••"
           />
@@ -115,7 +113,7 @@ export default function ResetPasswordForm() {
             onChange={(e) => setConfirmPassword(e.target.value)}
             autoComplete="new-password"
             required
-            minLength={8}
+            minLength={6}
             className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm transition-shadow"
             placeholder="••••••••"
           />

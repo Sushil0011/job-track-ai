@@ -13,15 +13,11 @@ export default async function ProfileLayout({
   }
 
   return (
-    <div className="min-h-[calc(100vh-72px)] bg-slate-50 selection:bg-indigo-100 selection:text-indigo-900">
-      <div className="max-w-5xl mx-auto px-6 md:px-12 py-8 lg:py-10 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-6 lg:gap-8 items-start">
-          <ProfileSidebar user={user} />
-          <div className="min-w-0 bg-white rounded-2xl shadow-premium border border-slate-200/60 p-6 sm:p-8 lg:p-10 relative overflow-hidden">
-            <div className="absolute -top-16 -right-16 w-40 h-40 bg-indigo-500/10 blur-3xl rounded-full pointer-events-none" />
-            <div className="relative z-10">{children}</div>
-          </div>
-        </div>
+    <div className="grid w-full max-w-5xl mx-auto grid-cols-1 content-center lg:grid-cols-[280px_minmax(0,1fr)] gap-6 lg:gap-8 lg:items-center selection:bg-indigo-100 selection:text-indigo-900 lg:mt-16">
+      <ProfileSidebar user={user} />
+      <div className="min-w-0 bg-white rounded-2xl shadow-premium border border-slate-200/60 p-6 sm:p-8 relative overflow-hidden">
+        <div className="absolute -top-16 -right-16 w-40 h-40 bg-indigo-500/10 blur-3xl rounded-full pointer-events-none" />
+        <div className="relative z-10">{children}</div>
       </div>
     </div>
   );
