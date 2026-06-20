@@ -1,7 +1,8 @@
 import { Briefcase } from "lucide-react";
 import Link from "next/link";
-import GoogleButton from "@/components/auth/GoogleAuth";
+import GoogleButton from "@/components/auth/google-auth";
 import CredentialsForm from "@/components/auth/form";
+import GithubLogin from "@/components/auth/github-auth";
 
 export default function SignupPage() {
   return (
@@ -27,6 +28,7 @@ export default function SignupPage() {
         <div className="relative z-10">
           <CredentialsForm />
           <GoogleButton />
+          <GithubLogin/>
         </div>
         <Link
           href="/login"
