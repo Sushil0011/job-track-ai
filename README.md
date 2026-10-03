@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# JobTrack AI frontend
 
-## Getting Started
+Next.js 16 App Router frontend for the JobTrack AI application tracker. The UI talks to the Fastify backend through a same-origin server proxy, which keeps access/refresh tokens in HttpOnly cookies and forwards authenticated requests to the API.
 
-First, run the development server:
+## Local setup
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. Start the backend and PostgreSQL database. Follow the backend repository README and apply its Drizzle schema changes.
+2. Copy `.env.example` to `.env.local` and configure `BACKEND_API_URL` and any OAuth client IDs.
+3. Install and run the frontend:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+   ```bash
+   npm install
+   npm run dev
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+   Open `http://localhost:3000`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`BACKEND_API_URL` should point to the backend API base, normally `http://localhost:4000/v1`. `NEXT_PUBLIC_API_URL` is used by the direct GitHub OAuth redirect link and should use the same `/v1` base URL.
 
-## Learn More
+## Features
 
-To learn more about Next.js, take a look at the following resources:
+- Email/password, Google, and GitHub sign-in; password reset and profile settings
+- Job application create/list/detail/update/delete, search, status filter, list/board view
+- Notes and reminders for each application
+- Dashboard summary and six-month analytics
+- AI interview-question generator, resume analyzer, and email writer
+- Due reminder email processing is scheduled by calling the backend's protected cron endpoint
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The existing Fastify JWT session was retained; Auth.js is not configured in this repository.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## AI configuration
 
-## Deploy on Vercel
+Set `AI_API_KEY`, `AI_BASE_URL`, and `AI_MODEL` on the backend only. Resume files are uploaded to the backend for in-memory parsing and are not saved by the application.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Scripts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `npm run dev` — development server
+- `npm run build` — production build
+- `npm run start` — start the production server
+- `npm run lint` — ESLint checks
+- `npm run preview` — Cloudflare/OpenNext preview
+- `npm run deploy` — Cloudflare/OpenNext deployment

@@ -1,21 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Loader2, Lock } from "lucide-react";
 import { updatePassword } from "@/app/profile/reset-password/actions";
 
 export default function ResetPasswordForm() {
+  const router = useRouter();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
-    setSuccess("");
 
     if (newPassword !== confirmPassword) {
       setError("New passwords do not match.");
@@ -38,8 +38,9 @@ export default function ResetPasswordForm() {
     setCurrentPassword("");
     setNewPassword("");
     setConfirmPassword("");
-    setSuccess("Password updated successfully.");
     setIsSaving(false);
+    router.replace("/login?password=updated");
+    router.refresh();
   };
 
   return (
@@ -130,9 +131,6 @@ export default function ResetPasswordForm() {
           </button>
           {error && (
             <p className="text-sm text-red-600 font-medium">{error}</p>
-          )}
-          {success && !error && (
-            <p className="text-sm text-emerald-700 font-medium">{success}</p>
           )}
         </div>
       </form>

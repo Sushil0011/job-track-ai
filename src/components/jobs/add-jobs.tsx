@@ -1,145 +1,166 @@
 "use client";
 
 import { useState } from "react";
-import { X, Plus } from "lucide-react";
+import { Loader2, Plus, X } from "lucide-react";
+import { backendSend, type Job, type JobStatus } from "@/utils/backend-api";
 
-export default function AddJobModal() {
+const initialValues = {
+  companyName: "",
+  position: "",
+  jobUrl: "",
+  location: "",
+  salaryRange: "",
+  recruiterName: "",
+  recruiterEmail: "",
+  recruiterPhone: "",
+  status: "WISHLIST" as JobStatus,
+  applicationDate: new Date().toISOString().slice(0, 10),
+};
+
+export default function AddJobModal({
+  onCreated,
+}: {
+  onCreated?: (job: Job) => void;
+}) {
   const [isOpen, setIsOpen] = useState(false);
+  const [values, setValues] = useState(initialValues);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
 
-  if (!isOpen) {
-    return (
-      <button
-        onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 bg-[#5E43F3] hover:bg-[#4d36c9] text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors"
-      >
-        <Plus className="w-4 h-4" />
-        Add Application
-      </button>
-    );
-  }
+  const close = () => {
+    setIsOpen(false);
+    setError("");
+  };
+
+  const setField = <K extends keyof typeof initialValues>(
+    key: K,
+    value: (typeof initialValues)[K],
+  ) => setValues((current) => ({ ...current, [key]: value }));
+
+  const submit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSaving(true);
+    setError("");
+    try {
+      const result = await backendSend<{ job: Job }>("jobs", "POST", {
+        ...values,
+        applicationDate: values.applicationDate
+          ? `${values.applicationDate}T00:00:00.000Z`
+          : undefined,
+      });
+      onCreated?.(result.job);
+      setValues(initialValues);
+      close();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not save this application");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm transition-opacity">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
-        {/* Modal Header */}
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white z-10">
-          <h2 className="text-lg font-semibold text-slate-900">
-            Add New Job Application
-          </h2>
-          <button
-            onClick={() => setIsOpen(false)}
-            className="p-2 hover:bg-slate-50 rounded-lg text-slate-400 hover:text-slate-600 transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+    <>
+      <button
+        type="button"
+        onClick={() => setIsOpen(true)}
+        className="flex items-center gap-2 rounded-lg bg-[#5E43F3] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#4d36c9]"
+      >
+        <Plus className="h-4 w-4" />
+        Add application
+      </button>
 
-        {/* Scrollable Form Body */}
-        <div className="p-6 overflow-y-auto">
-          <form className="space-y-5">
-            <div className="grid grid-cols-2 gap-5">
-              <div className="space-y-1.5 col-span-2 md:col-span-1">
-                <label className="text-sm font-medium text-slate-700">
-                  Company Name
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Vercel"
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5E43F3]/20 focus:border-[#5E43F3]"
-                />
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm">
+          <div className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-xl">
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-100 bg-white px-6 py-4">
+              <div>
+                <h2 className="text-lg font-semibold text-slate-900">Add job application</h2>
+                <p className="mt-1 text-sm text-slate-500">Save the role and track each stage of your search.</p>
               </div>
-              <div className="space-y-1.5 col-span-2 md:col-span-1">
-                <label className="text-sm font-medium text-slate-700">
-                  Position
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Frontend Engineer"
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5E43F3]/20 focus:border-[#5E43F3]"
-                />
-              </div>
+              <button type="button" onClick={close} aria-label="Close dialog" className="rounded-lg p-2 text-slate-400 hover:bg-slate-50 hover:text-slate-700">
+                <X className="h-5 w-5" />
+              </button>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-slate-700">
-                Job URL
-              </label>
-              <input
-                type="url"
-                placeholder="https://..."
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5E43F3]/20 focus:border-[#5E43F3]"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-5">
-              <div className="space-y-1.5 col-span-2 md:col-span-1">
-                <label className="text-sm font-medium text-slate-700">
-                  Location
-                </label>
-                <input
-                  type="text"
-                  placeholder="Remote / SF"
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5E43F3]/20 focus:border-[#5E43F3]"
-                />
-              </div>
-              <div className="space-y-1.5 col-span-2 md:col-span-1">
-                <label className="text-sm font-medium text-slate-700">
-                  Salary Range
-                </label>
-                <input
-                  type="text"
-                  placeholder="$120k - $150k"
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5E43F3]/20 focus:border-[#5E43F3]"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-5">
-              <div className="space-y-1.5 col-span-2 md:col-span-1">
-                <label className="text-sm font-medium text-slate-700">
+            <form onSubmit={submit} className="space-y-5 overflow-y-auto p-6">
+              {error && <p role="alert" className="rounded-lg border border-red-100 bg-red-50 p-3 text-sm text-red-700">{error}</p>}
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Field label="Company" required value={values.companyName} onChange={(value) => setField("companyName", value)} placeholder="e.g. Vercel" />
+                <Field label="Position" required value={values.position} onChange={(value) => setField("position", value)} placeholder="e.g. Frontend Engineer" />
+                <Field label="Job URL" type="url" value={values.jobUrl} onChange={(value) => setField("jobUrl", value)} placeholder="https://..." />
+                <Field label="Location" value={values.location} onChange={(value) => setField("location", value)} placeholder="Remote / Delhi" />
+                <Field label="Salary range" value={values.salaryRange} onChange={(value) => setField("salaryRange", value)} placeholder="₹18–24 LPA" />
+                <label className="space-y-1.5 text-sm font-medium text-slate-700">
                   Status
+                  <select value={values.status} onChange={(event) => setField("status", event.target.value as JobStatus)} className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-normal text-slate-800 focus:border-[#5E43F3] focus:outline-none focus:ring-2 focus:ring-[#5E43F3]/20">
+                    <StatusOptions />
+                  </select>
                 </label>
-                <select className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5E43F3]/20 focus:border-[#5E43F3] bg-white">
-                  <option value="WISHLIST">Wishlist</option>
-                  <option value="APPLIED">Applied</option>
-                  <option value="ASSESSMENT">Assessment</option>
-                  <option value="INTERVIEW">Interview</option>
-                  <option value="OFFER">Offer</option>
-                  <option value="REJECTED">Rejected</option>
-                </select>
-              </div>
-              <div className="space-y-1.5 col-span-2 md:col-span-1">
-                <label className="text-sm font-medium text-slate-700">
-                  Date Applied
+                <label className="space-y-1.5 text-sm font-medium text-slate-700">
+                  Date applied / added
+                  <input type="date" value={values.applicationDate} onChange={(event) => setField("applicationDate", event.target.value)} className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-800 focus:border-[#5E43F3] focus:outline-none focus:ring-2 focus:ring-[#5E43F3]/20" />
                 </label>
-                <input
-                  type="date"
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5E43F3]/20 focus:border-[#5E43F3]"
-                />
               </div>
-            </div>
-          </form>
+              <details className="rounded-xl border border-slate-200 p-4">
+                <summary className="cursor-pointer text-sm font-semibold text-slate-700">Recruiter contact (optional)</summary>
+                <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                  <Field label="Recruiter name" value={values.recruiterName} onChange={(value) => setField("recruiterName", value)} />
+                  <Field label="Recruiter email" type="email" value={values.recruiterEmail} onChange={(value) => setField("recruiterEmail", value)} />
+                  <Field label="Recruiter phone" value={values.recruiterPhone} onChange={(value) => setField("recruiterPhone", value)} />
+                </div>
+              </details>
+              <div className="flex justify-end gap-3 border-t border-slate-100 pt-4">
+                <button type="button" onClick={close} className="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100">Cancel</button>
+                <button type="submit" disabled={saving} className="inline-flex items-center gap-2 rounded-lg bg-[#5E43F3] px-4 py-2 text-sm font-medium text-white hover:bg-[#4d36c9] disabled:cursor-not-allowed disabled:opacity-60">
+                  {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+                  {saving ? "Saving…" : "Save application"}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
+      )}
+    </>
+  );
+}
 
-        {/* Modal Footer */}
-        <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-3 sticky bottom-0">
-          <button
-            type="button"
-            onClick={() => setIsOpen(false)}
-            className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200/50 rounded-lg transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            className="px-4 py-2 text-sm font-medium text-white bg-[#5E43F3] hover:bg-[#4d36c9] rounded-lg transition-colors shadow-sm"
-          >
-            Save Application
-          </button>
-        </div>
-      </div>
-    </div>
+export function StatusOptions() {
+  return <>
+    <option value="WISHLIST">Wishlist</option>
+    <option value="APPLIED">Applied</option>
+    <option value="ASSESSMENT">Assessment</option>
+    <option value="INTERVIEW">Interview</option>
+    <option value="OFFER">Offer</option>
+    <option value="REJECTED">Rejected</option>
+  </>;
+}
+
+function Field({
+  label,
+  value,
+  onChange,
+  placeholder,
+  type = "text",
+  required = false,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  type?: string;
+  required?: boolean;
+}) {
+  return (
+    <label className="space-y-1.5 text-sm font-medium text-slate-700">
+      {label}
+      <input
+        type={type}
+        value={value}
+        required={required}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
+        className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-800 focus:border-[#5E43F3] focus:outline-none focus:ring-2 focus:ring-[#5E43F3]/20"
+      />
+    </label>
   );
 }

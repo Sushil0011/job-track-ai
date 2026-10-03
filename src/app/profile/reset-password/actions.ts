@@ -1,57 +1,53 @@
 "use server";
 
-import { post } from "axify-js";
 import { cookies } from "next/headers";
 
 type ActionResult = { error?: string };
 
-async function getAuthToken(): Promise<string | null> {
-  return (await cookies()).get("token")?.value ?? null;
-}
-
 function getApiUrl(): string | null {
-  return process.env.NEXT_PUBLIC_API_URL ?? null;
+  const configured = process.env.BACKEND_API_URL ?? process.env.NEXT_PUBLIC_API_URL;
+  if (!configured) return null;
+  const base = configured.replace(/\/+$/, "");
+  return base.endsWith("/v1") ? base : `${base}/v1`;
 }
 
 function parseErrorMessage(body: unknown, fallback: string): string {
   if (!body || typeof body !== "object") return fallback;
   const record = body as Record<string, unknown>;
-  const message = record.message ?? record.error;
-  return typeof message === "string" ? message : fallback;
+  return typeof record.message === "string" ? record.message : fallback;
 }
 
 export async function updatePassword(
   currentPassword: string,
   newPassword: string,
 ): Promise<ActionResult> {
-  const token = await getAuthToken();
-  if (!token) {
-    return { error: "Not authenticated" };
-  }
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+  if (!token) return { error: "Not authenticated" };
 
   const apiUrl = getApiUrl();
-  if (!apiUrl) {
-    return { error: "API not configured" };
-  }
+  if (!apiUrl) return { error: "API not configured" };
 
   try {
-    const res = await post(
-      `${apiUrl}/auth/change-password`,
-      { oldPassword:currentPassword, newPassword },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+    const response = await fetch(`${apiUrl}/auth/change-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-    );
-
-    if (!res) {
-      const body = await res.json().catch(() => null);
+      body: JSON.stringify({ oldPassword: currentPassword, newPassword }),
+      cache: "no-store",
+    });
+    const body = await response.json().catch(() => null);
+    if (!response.ok) {
       return { error: parseErrorMessage(body, "Failed to update password") };
     }
+
+    // Changing a password revokes the backend refresh-token session.
+    cookieStore.delete("token");
+    cookieStore.delete("refresh_token");
     return {};
   } catch {
-    return { error: "Failed to update password" };
+    return { error: "Could not reach the backend API" };
   }
 }

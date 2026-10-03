@@ -5,10 +5,6 @@ import CredentialsForm from "@/components/auth/form";
 import { Suspense } from "react";
 import GithubLogin from "@/components/auth/github-auth";
 
-type LoginPageProps = {
-  searchParams: Promise<{ reset?: string }>;
-};
-
 export default async function LoginPage() {
   return (
     <div className="w-full mx-auto max-w-md bg-white rounded-2xl shadow-premium border border-slate-200/60 p-8 relative overflow-hidden">

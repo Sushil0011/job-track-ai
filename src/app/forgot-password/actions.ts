@@ -1,45 +1,40 @@
 "use server";
 
-import { post } from "axify-js";
-
 type ActionResult = { error?: string; success?: boolean };
 
 function getApiUrl(): string | null {
-  return process.env.NEXT_PUBLIC_API_URL ?? null;
+  const configured = process.env.BACKEND_API_URL ?? process.env.NEXT_PUBLIC_API_URL;
+  if (!configured) return null;
+  const base = configured.replace(/\/+$/, "");
+  return base.endsWith("/v1") ? base : `${base}/v1`;
 }
 
 function parseErrorMessage(body: unknown, fallback: string): string {
   if (!body || typeof body !== "object") return fallback;
   const record = body as Record<string, unknown>;
-  const message = record.message ?? record.error;
-  return typeof message === "string" ? message : fallback;
+  return typeof record.message === "string" ? record.message : fallback;
 }
 
-export async function requestPasswordReset(
-  email: string,
-): Promise<ActionResult> {
+export async function requestPasswordReset(email: string): Promise<ActionResult> {
   const trimmed = email.trim();
-  if (!trimmed) {
-    return { error: "Email is required" };
-  }
+  if (!trimmed) return { error: "Email is required" };
 
   const apiUrl = getApiUrl();
-  if (!apiUrl) {
-    return { error: "API not configured" };
-  }
+  if (!apiUrl) return { error: "API not configured" };
 
   try {
-    const res = await post(`${apiUrl}/auth/forgot-password`, {
-      email: trimmed,
+    const response = await fetch(`${apiUrl}/auth/forgot-password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: trimmed }),
+      cache: "no-store",
     });
-
-    if (!res) {
-      const body = await res.json().catch(() => null);
+    const body = await response.json().catch(() => null);
+    if (!response.ok) {
       return { error: parseErrorMessage(body, "Failed to send reset email") };
     }
-
     return { success: true };
   } catch {
-    return { error: "Failed to send reset email" };
+    return { error: "Could not reach the backend API" };
   }
 }

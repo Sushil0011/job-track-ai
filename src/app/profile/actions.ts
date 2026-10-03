@@ -11,7 +11,10 @@ async function getAuthToken(): Promise<string | null> {
 }
 
 function getApiUrl(): string | null {
-  return process.env.NEXT_PUBLIC_API_URL ?? null;
+  const configured = process.env.BACKEND_API_URL ?? process.env.NEXT_PUBLIC_API_URL;
+  if (!configured) return null;
+  const base = configured.replace(/\/+$/, "");
+  return base.endsWith("/v1") ? base : `${base}/v1`;
 }
 
 function parseErrorMessage(body: unknown, fallback: string): string {
@@ -55,7 +58,7 @@ export async function updateUserName(
     }
 
     const data = await res.json();
-    const user: UserData | undefined = data?.user ?? data?.data;
+    const user: UserData | undefined = data?.data?.user ?? data?.user;
 
     updateTag(token);
 
@@ -82,7 +85,7 @@ export async function logout(): Promise<ActionResult> {
   const apiUrl = getApiUrl();
   if (apiUrl && token) {
     try {
-      await fetch(`${apiUrl}/logout`, {
+      await fetch(`${apiUrl}/auth/logout`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

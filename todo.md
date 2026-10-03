@@ -1,278 +1,67 @@
-# TODO.md
-
-# JobTrack AI - Development Roadmap
-
-## Phase 1: Foundation Setup
-
-### Project Setup
-
-* [ ] Create Next.js App Router project
-* [ ] Setup TypeScript
-* [ ] Setup Tailwind CSS
-* [ ] Setup ShadCN UI
-* [ ] Setup ESLint & Prettier
-* [ ] Setup Environment Variables
-
-### Database
-
-* [ ] Create PostgreSQL database
-* [ ] Setup Drizzle
-* [ ] Create initial migration
-* [ ] Configure Drizzle Client
-
-### Authentication
-
-* [ ] Setup Auth.js
-* [ ] Google Login
-* [ ] Protected Routes
-* [ ] Session Management
-* [ ] Logout functionality
-
----
-
-# Phase 2: Core Job Tracking (MVP)
-
-### Database Models
-
-#### User
-
-* [ ] Create User model
-
-#### Job
-
-* [ ] Create Job model
-
-#### Note
-
-* [ ] Create Note model
-
-#### Reminder
-
-* [ ] Create Reminder model
-
----
-
-### Job APIs
-
-* [ ] Create Job
-* [ ] Get Jobs
-* [ ] Get Single Job
-* [ ] Update Job
-* [ ] Delete Job
-
----
-
-### Dashboard
-
-#### Stats Cards
-
-* [ ] Total Applications
-* [ ] Active Interviews
-* [ ] Offers Received
-* [ ] Rejections
-
-#### Recent Applications
-
-* [ ] Applications Table
-* [ ] Status Badge Component
-* [ ] Pagination
-
-#### Upcoming Reminders
-
-* [ ] Reminder Widget
-* [ ] Due Soon Highlight
-
----
-
-### Job Management
-
-#### Job List Page
-
-* [ ] Search Jobs
-* [ ] Filter By Status
-* [ ] Sort By Date
-
-#### Add Job Modal
-
-* [ ] Company Name
-* [ ] Position
-* [ ] Job URL
-* [ ] Salary
-* [ ] Location
-* [ ] Status
-* [ ] Date Applied
-
-#### Job Details Page
-
-* [ ] Application Information
-* [ ] Recruiter Details
-* [ ] Notes Section
-* [ ] Reminder Section
-
----
-
-# Phase 3: Productivity Features
-
-### Notes
-
-* [ ] Create Notes
-* [ ] Edit Notes
-* [ ] Delete Notes
-
-### Reminders
-
-* [ ] Create Reminder
-* [ ] Update Reminder
-* [ ] Delete Reminder
-* [ ] Reminder List
-
-### Kanban Board
-
-#### Wishlist Column
-
-* [ ] Drag & Drop
-
-#### Applied Column
-
-* [ ] Drag & Drop
-
-#### Assessment Column
-
-* [ ] Drag & Drop
-
-#### Interview Column
-
-* [ ] Drag & Drop
-
-#### Offer Column
-
-* [ ] Drag & Drop
-
-#### Rejected Column
-
-* [ ] Drag & Drop
-
----
-
-# Phase 4: Analytics
-
-### Dashboard Analytics
-
-* [ ] Application Trend Chart
-* [ ] Interview Rate
-* [ ] Offer Rate
-* [ ] Rejection Rate
-
-### Insights
-
-* [ ] Most Active Month
-* [ ] Most Applied Company
-* [ ] Average Time To Interview
-
----
-
-# Phase 5: AI Features
-
-### AI Interview Questions
-
-* [ ] Paste Job Description
-* [ ] Generate Technical Questions
-* [ ] Generate Behavioral Questions
-* [ ] Save Questions
-
-### Resume Analyzer
-
-* [ ] Resume Upload
-* [ ] Parse Resume
-* [ ] Match Score
-* [ ] Missing Skills Detection
-
-### Email Generator
-
-* [ ] Follow-up Email
-* [ ] Thank You Email
-* [ ] Salary Negotiation Email
-
----
-
-# Phase 6: Notifications
-
-### Email Notifications
-
-* [ ] Reminder Emails
-* [ ] Interview Alerts
-* [ ] Follow-up Alerts
-
-### Scheduled Jobs
-
-* [ ] Daily Cron Job
-* [ ] Reminder Processing
-
----
-
-# Phase 7: Monetization
-
-### Subscription
-
-* [ ] Stripe Integration
-* [ ] Free Plan
-* [ ] Pro Plan
-
-### Limits
-
-* [ ] Free User Limits
-* [ ] Premium Features
-
----
-
-# Phase 8: Launch
-
-### Landing Page
-
-* [ ] Hero Section
-* [ ] Features Section
-* [ ] Pricing Section
-* [ ] FAQ
-
-### SEO
-
-* [ ] Meta Tags
-* [ ] Open Graph
-* [ ] Sitemap
+# JobTrack AI — Development Roadmap
+
+## Implemented in the current workspace
+
+### Foundation and authentication
+- [x] Next.js App Router + TypeScript + Tailwind setup
+- [x] Backend JWT session integration (HttpOnly cookies for the frontend proxy)
+- [x] Email/password signup and login
+- [x] Google and GitHub login flows
+- [x] Protected dashboard/profile routes
+- [x] Refresh-token renewal through the frontend backend proxy
+- [x] Logout, change password, forgot password, and reset password
+
+> The current project uses Fastify JWT sessions. Auth.js is not configured; the existing session flow was preserved.
+
+### Core tracking
+- [x] PostgreSQL models for users, jobs, notes, and reminders
+- [x] Create, list, read, update, and delete job applications
+- [x] Search, filter by status, sort by date, list/board views
+- [x] Status updates across Wishlist, Applied, Assessment, Interview, Offer, and Rejected
+- [x] Application details and recruiter contact information
+- [x] Create, edit, and delete application notes
+- [x] Create, complete, and delete reminders
+- [x] Dashboard cards, recent applications, and upcoming reminders use live API data
 
 ### Analytics
+- [x] Total, active, interview, offer, and rejection counts
+- [x] Six-month application trend
+- [x] Interview and offer rates
+- [ ] Most active month/company and average time to interview
 
-* [ ] Google Analytics
-* [ ] PostHog
+### AI tools
+- [x] Interview-question generator (technical, behavioral, or mixed)
+- [x] Save generated interview questions to an application's notes
+- [x] PDF, DOCX, TXT, and Markdown resume upload/text extraction
+- [x] Resume-to-job match score, strengths, skill gaps, and suggestions
+- [x] Follow-up, thank-you, and salary-negotiation email drafts
 
-### Deployment
+### Reminder emails
+- [x] Reminder email sender and protected cron-processing API
+- [ ] Configure a hosting-provider cron schedule to call `POST /v1/cron/reminders`
 
-* [ ] Deploy Frontend
-* [ ] Deploy Database
-* [ ] Configure Domain
-* [ ] Configure SSL
+## Remaining / later phases
 
----
+### Board and productivity polish
+- [ ] Drag-and-drop between board columns (status can currently be changed from a dropdown)
+- [ ] Pagination controls in the frontend list (API pagination is available)
+- [ ] Reminder edit/reschedule form
+- [ ] Export applications to CSV
 
-# MVP Launch Checklist
+### Monetization
+- [ ] Stripe integration and plans
+- [ ] Free-user limits and premium features
 
-* [ ] Authentication
-* [ ] Job CRUD
-* [ ] Dashboard
-* [ ] Job Details
-* [ ] Notes
-* [ ] Reminders
-* [ ] Responsive Design
-* [ ] Error Handling
-* [ ] Production Deployment
+### Launch
+- [ ] Production environment variables and provider credentials
+- [ ] Production database migration and deployment
+- [ ] Responsive/mobile navigation polish
+- [ ] SEO metadata, sitemap, and analytics integration
+- [ ] E2E tests for signup-to-job-tracking flow
 
----
+## Required configuration
 
-# Post Launch
-
-* [ ] Gather User Feedback
-* [ ] Track Usage Metrics
-* [ ] Improve UX
-* [ ] Build AI Features
-* [ ] Add Subscription Plans
-* [ ] Scale Infrastructure
+- Backend: `DATABASE_URL`, `JWT_SECRET`, `FRONTEND_URL`
+- AI tools: backend `AI_API_KEY`, `AI_BASE_URL`, `AI_MODEL`
+- Reminder emails: SMTP settings and `CRON_SECRET`; configure an external scheduler
+- Frontend: `BACKEND_API_URL` and OAuth client IDs as needed
