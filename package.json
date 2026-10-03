@@ -8,11 +8,12 @@
     "start": "next start",
     "lint": "eslint",
     "preview": "npx @opennextjs/cloudflare build && wrangler dev",
-  "deploy": "npx @opennextjs/cloudflare build && wrangler deploy"
+    "deploy": "npx @opennextjs/cloudflare build && wrangler deploy"
   },
   "dependencies": {
     "@opennextjs/cloudflare": "^1.19.11",
     "@react-oauth/google": "^0.13.5",
+    "@sentry/nextjs": "^10.61.0",
     "axify-js": "^1.0.5",
     "js-cookie": "^3.0.8",
     "lucide-react": "^1.17.0",
